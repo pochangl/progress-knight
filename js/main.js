@@ -80,6 +80,7 @@ const skillBaseData = {
     "Intimidation": { name: "Intimidation", maxXp: 100, effect: -0.01, description: "Expenses" },
     "Demon training": { name: "Demon training", maxXp: 100, effect: 0.01, description: "All xp" },
     "Blood meditation": { name: "Blood meditation", maxXp: 100, effect: 0.01, description: "Evil gain" },
+    "Unholy recall": { name: "Unholy recall", maxXp: 100, effect: 0.0005, description: "Max levels kept" },
     "Demon's wealth": { name: "Demon's wealth", maxXp: 100, effect: 0.002, description: "Job pay" },
 
 }
@@ -114,7 +115,7 @@ const skillCategories = {
     "Fundamentals": ["Concentration", "Productivity", "Bargaining", "Meditation"],
     "Combat": ["Strength", "Battle tactics", "Muscle memory"],
     "Magic": ["Mana control", "Immortality", "Time warping", "Super immortality"],
-    "Dark magic": ["Dark influence", "Evil control", "Intimidation", "Demon training", "Blood meditation", "Demon's wealth"]
+    "Dark magic": ["Dark influence", "Evil control", "Intimidation", "Demon training", "Blood meditation", "Unholy recall", "Demon's wealth"]
 }
 
 const itemCategories = {
@@ -177,6 +178,7 @@ const tooltips = {
     "Intimidation": "Learn to emit a devilish aura which strikes extreme fear into other merchants, forcing them to give you heavy discounts.",
     "Demon training": "A mere human body is too feeble and weak to withstand evil. Train with forbidden methods to slowly manifest into a demon, capable of absorbing knowledge rapidly.",
     "Blood meditation": "Grow and culture the evil within you through the sacrifise of other living beings, drastically increasing evil gain.",
+    "Unholy recall": "You've done all this before. Use the evil to remember your past lives and recover their power.",
     "Demon's wealth": "Through the means of dark magic, multiply the raw matter of the coins you receive from your job.",
 
     "Homeless": "Sleep on the uncomfortable, filthy streets while almost freezing to death every night. It cannot get any worse than this.",
@@ -289,6 +291,13 @@ function setCustomEffects() {
     immortality.getEffect = function () {
         var multiplier = 1 + getBaseLog(33, immortality.level + 1)
         return multiplier
+    }
+
+    //Define lower constraints for unholy recall
+    var unholyRecall = gameData.taskData["Unholy recall"];
+    unholyRecall.getEffect = function () {
+        var multiplier = unholyRecall.level * 0.0005;
+        return multiplier;
     }
 }
 
@@ -951,11 +960,12 @@ function rebirthTwo() {
     gameData.rebirthTwoCount += 1
     gameData.evil += getEvilGain()
 
+    var recallEffect = gameData.taskData["Unholy recall"].getEffect();
     rebirthReset()
 
     for (taskName in gameData.taskData) {
         var task = gameData.taskData[taskName]
-        task.maxLevel = 0
+        task.maxLevel = Math.floor(recallEffect * task.maxLevel);
     }
 }
 
@@ -1211,6 +1221,7 @@ gameData.requirements = {
     "Intimidation": new EvilRequirement([getTaskElement("Intimidation")], [{ requirement: 1 }]),
     "Demon training": new EvilRequirement([getTaskElement("Demon training")], [{ requirement: 25 }]),
     "Blood meditation": new EvilRequirement([getTaskElement("Blood meditation")], [{ requirement: 75 }]),
+    "Unholy recall": new EvilRequirement([getTaskElement("Unholy recall")], [{ requirement: 75 }]),
     "Demon's wealth": new EvilRequirement([getTaskElement("Demon's wealth")], [{ requirement: 500 }]),
 
     //Properties
