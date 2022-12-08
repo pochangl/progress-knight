@@ -555,6 +555,7 @@ function updateTaskRows() {
         row.getElementsByClassName("level")[0].textContent = task.level
         row.getElementsByClassName("xpGain")[0].textContent = format(task.getXpGain())
         row.getElementsByClassName("xpLeft")[0].textContent = format(task.getXpLeft())
+        row.getElementsByClassName("daysLeft")[0].textContent = format(Math.ceil(task.getDaysLeft()))
 
         var maxLevel = row.getElementsByClassName("maxLevel")[0]
         maxLevel.textContent = task.maxLevel
