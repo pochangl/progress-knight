@@ -15,6 +15,7 @@ var gameData = {
     currentSkill: null,
     currentProperty: null,
     currentMisc: null,
+    queuedJobName: null,
 }
 
 var tempData = {}
@@ -707,10 +708,27 @@ function getNextEntity(data, categoryType, entityName) {
     var nextEntity = data[nextEntityName]
     return nextEntity
 }
+function getNextTrivial(data) {
+    let jobNames = []
+    jobNames = jobNames.concat.apply(jobNames, Object.values(jobCategories))
+    let jobs = jobNames.map((name) => data[name])
+    jobs = jobs.filter((job) => job.getDaysLeft() < 1)
+    jobs = jobs.filter((job) => gameData.requirements[job.name].isCompleted())
+
+    if (jobs.length > 0) {
+        gameData.queuedJobName ||= gameData.currentJob.name
+        return jobs[0]
+    } else if (gameData.queuedJobName) {
+        const job = data[gameData.queuedJobName]
+        gameData.queuedJobName = null
+        return job
+    }
+}
 
 function autoPromote() {
     if (!autoPromoteElement.checked) return
-    var nextEntity = getNextEntity(gameData.taskData, jobCategories, gameData.currentJob.name)
+    const nextTrivial = getNextTrivial(gameData.taskData)
+    var nextEntity = nextTrivial || getNextEntity(gameData.taskData, jobCategories, gameData.currentJob.name)
     if (nextEntity == null) return
     var requirement = gameData.requirements[nextEntity.name]
     if (requirement.isCompleted()) gameData.currentJob = nextEntity
