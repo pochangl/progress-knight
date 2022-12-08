@@ -727,7 +727,7 @@ function setSkillWithLowestMaxXp() {
         var skill = gameData.taskData[skillName]
         var requirement = gameData.requirements[skillName]
         if (skill instanceof Skill && requirement.isCompleted() && !checkSkillSkipped(skill)) {
-            xpDict[skill.name] = skill.level //skill.getMaxXp() / skill.getXpGain()
+            xpDict[skill.name] = skill.getXpLeft() / skill.getXpGain()
         }
     }
 
