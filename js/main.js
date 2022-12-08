@@ -23,6 +23,7 @@ var skillWithLowestMaxXp = null
 
 const autoPromoteElement = document.getElementById("autoPromote")
 const autoLearnElement = document.getElementById("autoLearn")
+const autoShopElement = document.getElementById("autoShop")
 
 const updateSpeed = 20
 
@@ -714,6 +715,38 @@ function autoPromote() {
     if (requirement.isCompleted()) gameData.currentJob = nextEntity
 }
 
+function autoShop() {
+    if (!autoShopElement.checked) return
+    const currentProperty = gameData.currentProperty
+    let netIncome = gameData.currentJob.getIncome() - getExpense()
+    let properties = itemCategories.Properties.map((name) => gameData.itemData[name])
+    properties.sort((p1, p2) => p1.getExpense() - p2.getExpense)
+    properties = properties.filter((p) => currentProperty.getExpense() < p.getExpense())
+    properties = properties.filter((p) => p.getExpense() - currentProperty.getExpense() < netIncome)
+
+    let nextProperty = properties[0]
+
+    let excluded_names = new Set(gameData.currentMisc.map((misc)=> misc.name))
+    let miscs = itemCategories.Misc.filter((name) => !excluded_names.has(name)).map((name) => gameData.itemData[name])
+    miscs = miscs.filter((misc) => misc.getExpense() < netIncome)
+    miscs = miscs.sort((m1, m2) => m1.getExpense() - m2.getExpense())
+    nextMisc = miscs[0]
+    if (nextProperty && nextMisc) {
+        if ((nextProperty.getExpense() - gameData.currentProperty.getExpense()) < nextMisc.getExpense()) {
+            nextMisc = null
+        } else {
+            nextProperty = null
+        }
+    }
+    if (nextProperty) {
+        setProperty(nextProperty.name)
+    }
+    if (nextMisc) {
+        setMisc(nextMisc.name)
+    }
+}
+
+
 function checkSkillSkipped(skill) {
     var row = document.getElementById("row " + skill.name)
     var isSkillSkipped = row.getElementsByClassName("checkbox")[0].checked
@@ -1014,6 +1047,7 @@ function update() {
     increaseDays()
     autoPromote()
     autoLearn()
+    autoShop()
     doCurrentTask(gameData.currentJob)
     doCurrentTask(gameData.currentSkill)
     applyExpenses()
