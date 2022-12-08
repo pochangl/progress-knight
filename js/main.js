@@ -1011,7 +1011,6 @@ function updateUI() {
 }
 
 function update() {
-    try {
     increaseDays()
     autoPromote()
     autoLearn()
@@ -1019,9 +1018,6 @@ function update() {
     doCurrentTask(gameData.currentSkill)
     applyExpenses()
     updateUI()
-    } catch (err) {
-        console.log(err)
-    }
 }
 
 function resetGameData() {
