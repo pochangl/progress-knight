@@ -1153,6 +1153,9 @@ addMultipliers()
 setTab(jobTabButton, "jobs")
 
 update()
-setInterval(update, 1000 / updateSpeed)
-setInterval(saveGameData, 3000)
-setInterval(setSkillWithLowestMaxXp, 1000)
+
+setTimeout(function() {
+    setInterval(update, 1000 / updateSpeed)
+    setInterval(saveGameData, 3000)
+    setInterval(setSkillWithLowestMaxXp, 1000)
+}, 1000)
