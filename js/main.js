@@ -766,8 +766,8 @@ function autoShop() {
     const currentProperty = gameData.currentProperty
     let netIncome = gameData.currentJob.getIncome() - getExpense()
     let properties = itemCategories.Properties
-        .filter(isFulfilled)
         .map((name) => gameData.itemData[name])
+        .filter(isFulfilled)
     properties.sort((p1, p2) => p1.getExpense() - p2.getExpense)
     properties = properties.filter((p) => currentProperty.getExpense() < p.getExpense())
     properties = properties.filter((p) => p.getExpense() - currentProperty.getExpense() < netIncome)
