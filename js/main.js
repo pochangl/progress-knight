@@ -705,20 +705,13 @@ function isFulfilled(task) {
     return gameData.requirements[task.name].isCompleted()
 }
 
-function getNextEntity(data) {
-    let jobNames = []
-    jobNames = jobNames.concat.apply(jobNames, Object.values(jobCategories))
-    let jobs = jobNames.map((name) => data[name])
-        .filter(isFulfilled)
-        .sort((a, b) => b.getIncome() - a.getIncome())
+function getNextEntity(jobs) {
+    let jobs = jobs.sort((a, b) => b.getIncome() - a.getIncome())
     return jobs[0]
 }
 
-function getLowLevelJob(data) {
-    let jobNames = []
-    jobNames = jobNames.concat.apply(jobNames, Object.values(jobCategories))
-    let jobs = jobNames.map((name) => data[name])
-        .filter(isFulfilled)
+function getLowLevelJob(jobs) {
+    jobs = jobs
         .filter((a) => a.level < 10)
         .sort((a, b) => b.getIncome() - a.getIncome())
 
@@ -726,14 +719,8 @@ function getLowLevelJob(data) {
     if (daysLeft > 30) return jobs[0]
 }
 
-function getNextTrivial(data) {
-    let jobNames = []
-    jobNames = jobNames.concat.apply(jobNames, Object.values(jobCategories))
-    let jobs = jobNames.map((name) => data[name])
+function getNextTrivial(jobs) {
     jobs = jobs.filter((job) => job.getDaysLeft() < 1)
-    jobs = jobs.filter(isFulfilled)
-
-
     const daysLeft = gameData.coins / getExpense()
     const sufficient = daysLeft > 365
     const insufficient = daysLeft < 30
@@ -753,8 +740,12 @@ function getNextTrivial(data) {
 
 function autoPromote() {
     if (!autoPromoteElement.checked) return
-    const nextTrivial = getNextTrivial(gameData.taskData)
-    const lowLevelJob = getLowLevelJob(gameData.taskData)
+    const jobs = jobNames.concat
+        .apply(jobNames, Object.values(jobCategories))
+        .map((name) => data[name])
+        .filter(isFulfilled)
+    const nextTrivial = getNextTrivial(jobs)
+    const lowLevelJob = getLowLevelJob(jobs)
     var nextEntity =  lowLevelJob || nextTrivial || getNextEntity(gameData.taskData)
     if (nextEntity == null) return
     var requirement = gameData.requirements[nextEntity.name]
