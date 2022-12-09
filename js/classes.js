@@ -160,7 +160,6 @@ class TaskRequirement extends Requirement {
         let daysLeft = 0
         for (let requirement of this.requirements) {
             let task = gameData.taskData[requirement.task]
-            console.log(task)
             daysLeft += task.getDaysLeftFromLevel(requirement.requirement)
         }
         return daysLeft
