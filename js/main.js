@@ -25,6 +25,7 @@ var skillWithLowestMaxXp = null
 const autoPromoteElement = document.getElementById("autoPromote")
 const autoLearnElement = document.getElementById("autoLearn")
 const autoShopElement = document.getElementById("autoShop")
+const autoRebirthElement = document.getElementById("autoRebirth")
 
 const updateSpeed = 20
 
@@ -845,9 +846,7 @@ function autoLearn() {
 
 function autoRebirth() {
     if (!isAlive()) {
-        if (gameData.days >= 200 * 365) {
-            rebirthTwo()
-        } else {
+        if (autoRebirthElement.checked) {
             rebirthOne()
         }
     }
