@@ -19,6 +19,27 @@ class Task {
         return Math.round(this.getMaxXp() - this.xp)
     }
 
+    getDaysLeftFromLevel(level) {
+        if (level < this.level) return 0
+
+        const currentLevel = this.level
+        const currentXp = this.xp
+        const levels = Array(level - this.level).fill(this.level).map((lv, index) => lv + index)
+
+        let daysLeft = 0
+        for (const lv of levels) {
+            this.level = lv
+            this.getDaysLeft()
+            daysLeft += this.getDaysLeft()
+            this.xp = 0
+        }
+
+        this.level = currentLevel
+        this.xp = currentXp
+
+        return daysLeft
+    }
+
     getMaxLevelMultiplier() {
         var maxLevelMultiplier = 1 + this.maxLevel / 10
         return maxLevelMultiplier
@@ -133,6 +154,16 @@ class TaskRequirement extends Requirement {
 
     getCondition(requirement) {
         return gameData.taskData[requirement.task].level >= requirement.requirement
+    }
+
+    getDaysLeft() {
+        let daysLeft = 0
+        for (let requirement of this.requirements) {
+            let task = gameData.taskData[requirement.task]
+            console.log(task)
+            daysLeft += task.getDaysLeftFromLevel(requirement.requirement)
+        }
+        return daysLeft
     }
 }
 
