@@ -765,7 +765,9 @@ function autoShop() {
     if (!autoShopElement.checked) return
     const currentProperty = gameData.currentProperty
     let netIncome = gameData.currentJob.getIncome() - getExpense()
-    let properties = itemCategories.Properties.map((name) => gameData.itemData[name])
+    let properties = itemCategories.Properties
+        .filter(isFulfilled)
+        .map((name) => gameData.itemData[name])
     properties.sort((p1, p2) => p1.getExpense() - p2.getExpense)
     properties = properties.filter((p) => currentProperty.getExpense() < p.getExpense())
     properties = properties.filter((p) => p.getExpense() - currentProperty.getExpense() < netIncome)
@@ -773,7 +775,10 @@ function autoShop() {
     let nextProperty = properties[0]
 
     let excluded_names = new Set(gameData.currentMisc.map((misc) => misc.name))
-    let miscs = itemCategories.Misc.filter((name) => !excluded_names.has(name)).map((name) => gameData.itemData[name])
+    let miscs = itemCategories.Misc
+        .filter(isFulfilled)
+        .filter((name) => !excluded_names.has(name))
+        .map((name) => gameData.itemData[name])
     miscs = miscs.filter((misc) => misc.getExpense() < netIncome)
     miscs = miscs.sort((m1, m2) => m1.getExpense() - m2.getExpense())
     nextMisc = miscs[0]
