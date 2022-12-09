@@ -706,7 +706,7 @@ function isFulfilled(task) {
 }
 
 function getNextEntity(jobs) {
-    let jobs = jobs.sort((a, b) => b.getIncome() - a.getIncome())
+    jobs = jobs.sort((a, b) => b.getIncome() - a.getIncome())
     return jobs[0]
 }
 
@@ -740,13 +740,15 @@ function getNextTrivial(jobs) {
 
 function autoPromote() {
     if (!autoPromoteElement.checked) return
-    const jobs = jobNames.concat
+    jobNames = []
+    const allJobs = jobNames.concat
         .apply(jobNames, Object.values(jobCategories))
-        .map((name) => data[name])
-        .filter(isFulfilled)
-    const nextTrivial = getNextTrivial(jobs)
-    const lowLevelJob = getLowLevelJob(jobs)
-    var nextEntity =  lowLevelJob || nextTrivial || getNextEntity(gameData.taskData)
+        .map((name) => gameData.taskData[name])
+
+    const fulfilledJobs = allJobs.filter(isFulfilled)
+    const nextTrivial = getNextTrivial(fulfilledJobs)
+    const lowLevelJob = getLowLevelJob(fulfilledJobs)
+    const nextEntity =  lowLevelJob || nextTrivial || getNextEntity(fulfilledJobs)
     if (nextEntity == null) return
     var requirement = gameData.requirements[nextEntity.name]
     if (requirement.isCompleted()) gameData.currentJob = nextEntity
