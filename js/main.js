@@ -825,6 +825,16 @@ function autoLearn() {
     gameData.currentSkill = skillWithLowestMaxXp
 }
 
+function autoRebirth() {
+    if (!isAlive()) {
+        if (gameData.days >= 200 * 365) {
+            rebirthTwo()
+        } else {
+            rebirthOne()
+        }
+    }
+}
+
 function yearsToDays(years) {
     var days = years * 365
     return days
@@ -1222,4 +1232,5 @@ setTimeout(function () {
     setInterval(update, 1000 / updateSpeed)
     setInterval(saveGameData, 3000)
     setInterval(setSkillWithLowestMaxXp, 1000)
+    setInterval(autoRebirth, 1000)
 }, 1000)
