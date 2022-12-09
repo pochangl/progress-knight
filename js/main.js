@@ -755,7 +755,7 @@ function autoPromote() {
     if (!autoPromoteElement.checked) return
     const nextTrivial = getNextTrivial(gameData.taskData)
     const lowLevelJob = getLowLevelJob(gameData.taskData)
-    var nextEntity = nextTrivial || lowLevelJob || getNextEntity(gameData.taskData)
+    var nextEntity =  lowLevelJob || nextTrivial || getNextEntity(gameData.taskData)
     if (nextEntity == null) return
     var requirement = gameData.requirements[nextEntity.name]
     if (requirement.isCompleted()) gameData.currentJob = nextEntity
