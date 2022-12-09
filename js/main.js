@@ -15,7 +15,7 @@ var gameData = {
     currentSkill: null,
     currentProperty: null,
     currentMisc: null,
-    queuedJobName: null,
+    isInTrivialMode: false,
 }
 
 var tempData = {}
@@ -701,6 +701,10 @@ function getCategoryFromEntityName(categoryType, entityName) {
     }
 }
 
+function isFulfilled(task) {
+    return gameData.requirements[task.name].isCompleted()
+}
+
 function getNextEntity(data, categoryType, entityName) {
     var category = getCategoryFromEntityName(categoryType, entityName)
     var nextIndex = category.indexOf(entityName) + 1
@@ -709,30 +713,29 @@ function getNextEntity(data, categoryType, entityName) {
     var nextEntity = data[nextEntityName]
     return nextEntity
 }
+
 function getNextTrivial(data) {
     let jobNames = []
     jobNames = jobNames.concat.apply(jobNames, Object.values(jobCategories))
     let jobs = jobNames.map((name) => data[name])
     jobs = jobs.filter((job) => job.getDaysLeft() < 1)
-    jobs = jobs.filter((job) => gameData.requirements[job.name].isCompleted())
+    jobs = jobs.filter(isFulfilled)
 
 
     const daysLeft = gameData.coins / getExpense()
     const sufficient = daysLeft > 365
     const insufficient = daysLeft < 30
     const ambiguous = !sufficient && !insufficient
-    const queued = gameData.queuedJobName
+    const isInTrivialMode = gameData.isInTrivialMode
 
-    const shouldTry = (ambiguous && queued) || sufficient
+    const shouldDo = (ambiguous && isInTrivialMode) || sufficient
 
-    if (jobs.length > 0 && shouldTry) {
-        gameData.queuedJobName ||= gameData.currentJob.name
+    if (jobs.length > 0 && shouldDo) {
+        gameData.isInTrivialMode = true
         return jobs[0]
     }
-    if (gameData.queuedJobName) {
-        const job = data[gameData.queuedJobName]
-        gameData.queuedJobName = null
-        return job
+    if (gameData.isInTrivialMode) {
+        gameData.isInTrivialMode = false
     }
 }
 
