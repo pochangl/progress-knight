@@ -738,12 +738,16 @@ function getNextTrivial(jobs) {
     }
 }
 
-function autoPromote() {
-    if (!autoPromoteElement.checked) return
-    jobNames = []
-    const allJobs = jobNames.concat
+function getAllJobs() {
+    const jobNames = []
+    return jobNames.concat
         .apply(jobNames, Object.values(jobCategories))
         .map((name) => gameData.taskData[name])
+}
+
+function autoPromote() {
+    if (!autoPromoteElement.checked) return
+    const allJobs = getAllJobs()
 
     const fulfilledJobs = allJobs.filter(isFulfilled)
     const nextTrivial = getNextTrivial(fulfilledJobs)
