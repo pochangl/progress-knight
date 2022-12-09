@@ -776,9 +776,9 @@ function autoShop() {
 
     let excluded_names = new Set(gameData.currentMisc.map((misc) => misc.name))
     let miscs = itemCategories.Misc
-        .filter(isFulfilled)
         .filter((name) => !excluded_names.has(name))
         .map((name) => gameData.itemData[name])
+        .filter(isFulfilled)
     miscs = miscs.filter((misc) => misc.getExpense() < netIncome)
     miscs = miscs.sort((m1, m2) => m1.getExpense() - m2.getExpense())
     nextMisc = miscs[0]
