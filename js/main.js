@@ -714,6 +714,18 @@ function getNextEntity(data, categoryType, entityName) {
     return nextEntity
 }
 
+function getLowLevelJob(data) {
+    let jobNames = []
+    jobNames = jobNames.concat.apply(jobNames, Object.values(jobCategories))
+    let jobs = jobNames.map((name) => data[name])
+        .filter(isFulfilled)
+        .filter((a) => a.level < 10)
+        .sort((a, b) => b.getIncome() - a.getIncome())
+
+    const daysLeft = gameData.coins / getExpense()
+    if (daysLeft > 30) return jobs[0]
+}
+
 function getNextTrivial(data) {
     let jobNames = []
     jobNames = jobNames.concat.apply(jobNames, Object.values(jobCategories))
@@ -742,7 +754,8 @@ function getNextTrivial(data) {
 function autoPromote() {
     if (!autoPromoteElement.checked) return
     const nextTrivial = getNextTrivial(gameData.taskData)
-    var nextEntity = nextTrivial || getNextEntity(gameData.taskData, jobCategories, gameData.currentJob.name)
+    const lowLevelJob = getLowLevelJob(gameData.taskData)
+    var nextEntity = nextTrivial || lowLevelJob || getNextEntity(gameData.taskData, jobCategories, gameData.currentJob.name)
     if (nextEntity == null) return
     var requirement = gameData.requirements[nextEntity.name]
     if (requirement.isCompleted()) gameData.currentJob = nextEntity
