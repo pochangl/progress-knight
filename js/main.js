@@ -753,7 +753,7 @@ function autoPromote() {
     const fulfilledJobs = allJobs.filter(isFulfilled)
     const nextTrivial = getNextTrivial(fulfilledJobs)
     const lowLevelJob = getLowLevelJob(fulfilledJobs)
-    const nextEntity =  lowLevelJob || nextTrivial || getNextEntity(fulfilledJobs)
+    const nextEntity = lowLevelJob || nextTrivial || getNextEntity(fulfilledJobs)
     if (nextEntity == null) return
     var requirement = gameData.requirements[nextEntity.name]
     if (requirement.isCompleted()) gameData.currentJob = nextEntity
@@ -845,9 +845,11 @@ function autoLearn() {
 }
 
 function autoRebirth() {
-    if (!isAlive()) {
-        if (autoRebirthElement.checked) {
+    if (!isAlive() && autoRebirthElement.checked) {
+        if (gameData.rebirthOneCount % 2) {
             rebirthOne()
+        } else {
+            rebirthTwo()
         }
     }
 }
