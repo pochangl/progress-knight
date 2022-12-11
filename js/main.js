@@ -845,12 +845,14 @@ function autoLearn() {
 }
 
 function autoRebirth() {
-    if (!isAlive() && autoRebirthElement.checked) {
-        if (gameData.rebirthOneCount % 2) {
-            rebirthOne()
-        } else {
-            rebirthTwo()
-        }
+    if (!autoRebirthElement.checked) return;
+    if (!gameData.requirements["Rebirth note 2"].isCompleted()) return;
+    if (gameData.taskData["Evil control"].maxLevel == 0 ) {
+        rebirthOne()
+    } else if (gameData.requirements["Rebirth note 3"].isCompleted()) {
+        rebirthTwo()
+    } else if (!isAlive()) {
+        rebirthOne()
     }
 }
 
